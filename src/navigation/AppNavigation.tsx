@@ -15,6 +15,7 @@ import AdminDashboardScreen from '../screens/AdminDashboardScreen';
 import AdminManageLocationsScreen from '../screens/AdminManageLocationsScreen';
 import AdminManageUsersScreen from '../screens/AdminManageUsersScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import SuperAdminDashboardScreen from '../screens/SuperAdminDashboardScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -117,14 +118,76 @@ const AdminTabs = () => {
   );
 };
 
+const SuperAdminStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="Super Admin Main"
+      component={SuperAdminDashboardScreen}
+      options={{ title: 'Super Admin Dashboard' }}
+    />
+    <Stack.Screen name="Complaint Detail" component={ComplaintDetailScreen} />
+  </Stack.Navigator>
+);
+
+const SuperAdminTabs = () => {
+  const theme = useTheme();
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName = 'alert-circle';
+          if (route.name === 'Dashboard') iconName = 'view-dashboard';
+          else if (route.name === 'Users') iconName = 'account-group';
+          else if (route.name === 'Complaints') iconName = 'format-list-bulleted';
+          else if (route.name === 'Infrastructure')
+            iconName = 'office-building';
+          else if (route.name === 'Profile') iconName = 'account';
+          return (
+            <MaterialCommunityIcons name={iconName} color={color} size={size} />
+          );
+        },
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: 'gray',
+      })}
+    >
+      <Tab.Screen
+        name="Dashboard"
+        component={SuperAdminStack}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen name="Users" component={AdminManageUsersScreen} />
+      <Tab.Screen
+        name="Complaints"
+        component={AdminStack}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Infrastructure"
+        component={AdminManageLocationsScreen}
+      />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+  );
+};
+
 const AppNavigation = () => {
-  const { accessToken, isAdmin, loading } = useAuth();
+  const { accessToken, isAdmin, isSuperAdmin, loading } = useAuth();
 
   if (loading) return null;
 
   return (
     <NavigationContainer>
-      {accessToken ? isAdmin ? <AdminTabs /> : <UserTabs /> : <AuthStack />}
+      {accessToken ? (
+        isSuperAdmin ? (
+          <SuperAdminTabs />
+        ) : isAdmin ? (
+          <AdminTabs />
+        ) : (
+          <UserTabs />
+        )
+      ) : (
+        <AuthStack />
+      )}
     </NavigationContainer>
   );
 };

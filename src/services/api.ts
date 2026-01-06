@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BASE_URL = 'http://app.undefineddevelopers.online/collegemaintain';
+const BASE_URL = 'http://app.undefineddevelopers.online/collegemaintain/api';
 
 const api = axios.create({
   baseURL: BASE_URL,

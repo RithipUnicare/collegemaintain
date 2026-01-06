@@ -12,6 +12,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   signup: (userData: any) => Promise<void>;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -74,6 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(null);
   };
 
+  const isSuperAdmin = user?.roles === 'SUPERADMIN';
   const isAdmin = user?.roles?.includes('ROLE_ADMIN') || false;
 
   return (
@@ -87,6 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         logout,
         signup,
         isAdmin,
+        isSuperAdmin,
       }}
     >
       {children}
